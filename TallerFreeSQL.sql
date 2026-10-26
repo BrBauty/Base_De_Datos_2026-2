@@ -1,0 +1,58 @@
+--clonar las tablas a mi schema
+CREATE TABLE EMP AS SELECT * FROM SCOTT.EMP;
+CREATE TABLE DEPT AS SELECT * FROM SCOTT.DEPT;
+
+-- PUNTO 1: Crear un duplicado de la tabla EMP llamado EMPTEST
+CREATE TABLE EMPTEST AS 
+SELECT * FROM EMP;
+
+
+-- PUNTO 2: Adicionar columna Genero de tipo carácter y tamaño 1
+ALTER TABLE EMPTEST ADD (Genero CHAR(1));
+
+
+-- PUNTO 3: Incrementar el tamaño de Genero para almacenar FEMALE o MALE
+ALTER TABLE EMPTEST MODIFY (Genero VARCHAR2(10));
+
+
+-- PUNTO 4: Crear la vista EMP_NO_MONEY (sin SAL ni COMM)
+CREATE OR REPLACE VIEW EMP_NO_MONEY AS
+SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, DEPTNO
+FROM EMP;
+
+
+-- PUNTO 5: Consulta de empleados con más de 20 años usando la vista
+SELECT ENAME, HIREDATE
+FROM EMP_NO_MONEY
+WHERE (SYSDATE - HIREDATE) / 365 > 20;
+
+
+-- PUNTO 6: Intento de consultar el salario desde la vista
+SELECT ENAME, SAL
+FROM EMP_NO_MONEY;
+
+-- PUNTO 7: Crear la vista EMP_DEPTNO_TEN con alias (NAME, DNO, ENO)
+CREATE OR REPLACE VIEW EMP_DEPTNO_TEN (NAME, DNO, ENO) AS
+SELECT ENAME, DEPTNO, EMPNO
+FROM EMP
+WHERE DEPTNO IN (10, 20)
+  AND SAL BETWEEN 1000 AND 1800;
+
+
+-- PUNTO 8: Consulta sobre la vista EMP_DEPTNO_TEN
+SELECT * FROM EMP_DEPTNO_TEN;
+
+
+-- PUNTO 9: Eliminar la vista EMP_DEPTNO_TEN
+DROP VIEW EMP_DEPTNO_TEN;
+
+
+-- PUNTO 10: Crear secuencia para departamento de 50 a 90 de 10 en 10
+CREATE SEQUENCE SEC_DEPTNO
+START WITH 50
+INCREMENT BY 10
+MAXVALUE 90;
+
+
+-- PUNTO 11: Crear índice sobre ENAME en la tabla EMP
+CREATE INDEX IEMPENAME ON EMP (ENAME);
